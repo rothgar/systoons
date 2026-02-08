@@ -259,6 +259,14 @@
     .contact {
       background: var(--white);
     }
+    .walk-character {
+      display: flex; justify-content: center;
+      margin-bottom: 12px;
+    }
+    .walk-img {
+      width: min(260px, 50vw);
+      filter: drop-shadow(0 4px 8px rgba(27,58,92,.18));
+    }
     .contact-form {
       max-width: 600px; margin: 0 auto;
       background: var(--cream); border-radius: 24px;
@@ -442,6 +450,12 @@
 
 <!-- CONTACT -->
 <section class="contact" id="contact">
+  <div class="walk-character">
+    <picture>
+      <source srcset="assets/walk.webp" type="image/webp">
+      <img src="assets/walk.png" alt="Walking box character" class="walk-img">
+    </picture>
+  </div>
   <h2 class="section-title">Let's Create Together</h2>
   <p class="section-subtitle">Ready for a custom animation? Tell us about your project and we'll bring it to life!</p>
   <div class="contact-form" id="contactForm">
