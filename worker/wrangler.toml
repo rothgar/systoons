@@ -1,6 +1,7 @@
 name = "systoons-contact"
 main = "src/index.js"
-compatibility_date = "2024-01-01"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
 
 # Email destination — must match a verified Email Routing address
 [[send_email]]
