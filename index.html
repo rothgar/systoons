@@ -140,14 +140,20 @@
     .hero-characters {
       width: 100%;
       display: block;
-      filter: drop-shadow(0 4px 12px rgba(27,58,92,.15));
+      position: relative;
+      z-index: 1;
     }
-    .hero-characters-shadow {
-      width: 80%;
-      height: 18px;
-      margin: -4px auto 0;
-      background: radial-gradient(ellipse at center, rgba(27,58,92,.18) 0%, rgba(27,58,92,.06) 50%, transparent 70%);
+    .char-shadows {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .char-shadow {
+      position: absolute;
+      height: 14px;
       border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(27,58,92,.28) 0%, rgba(27,58,92,.10) 50%, transparent 72%);
     }
 
     @keyframes bounceIn {
@@ -245,8 +251,11 @@
       object-fit: contain;
     }
     .carousel-slide .carousel-img {
-      max-height: 500px;
-      padding: 32px;
+      height: 450px;
+      width: auto;
+      max-width: 100%;
+      padding: 24px;
+      object-fit: contain;
     }
     .carousel-slide .vid-title {
       margin-top: 16px; font-family: 'Fredoka', sans-serif;
@@ -395,8 +404,8 @@
     <div class="logo-wrap">
       <img src="assets/logo-psd-nopupils.png" alt="Systoons" class="logo-img">
       <svg class="logo-eyes" viewBox="0 0 1624 369" preserveAspectRatio="xMidYMid meet">
-        <circle class="pupil pupil-left" cx="835" cy="262" r="22" fill="#14335A"/>
-        <circle class="pupil pupil-right" cx="1028" cy="262" r="22" fill="#14335A"/>
+        <circle class="pupil pupil-left" cx="858" cy="225" r="40" fill="#14335A"/>
+        <circle class="pupil pupil-right" cx="1053" cy="222" r="40" fill="#14335A"/>
       </svg>
     </div>
   </div>
@@ -414,7 +423,14 @@
 <section class="hero" id="hero">
   <div class="hero-characters-wrap">
     <img src="assets/characters.png" alt="Systoons Characters" class="hero-characters">
-    <div class="hero-characters-shadow"></div>
+    <div class="char-shadows">
+      <div class="char-shadow" style="left:6%;width:8%;top:83%"></div>
+      <div class="char-shadow" style="left:17%;width:10%;top:83%"></div>
+      <div class="char-shadow" style="left:30%;width:13%;top:83%"></div>
+      <div class="char-shadow" style="left:42%;width:14%;top:82%"></div>
+      <div class="char-shadow" style="left:58%;width:11%;top:81.5%"></div>
+      <div class="char-shadow" style="left:76%;width:14%;top:83%"></div>
+    </div>
   </div>
   <h1>Bring Your Systems <span class="to-life">to Life.</span></h1>
   <p>We turn complex systems and processes into playful, engaging animations that everyone can understand.</p>
@@ -457,7 +473,7 @@
         <span class="vid-title">Fully Animated System</span>
       </div>
       <div class="carousel-slide">
-        <img src="assets/character-design.png" alt="Custom Character Design" class="carousel-img">
+        <img src="assets/character-sheet.png" alt="Custom Character Design" class="carousel-img">
         <span class="vid-title">Custom Character Design</span>
       </div>
       <div class="carousel-slide">
@@ -515,8 +531,8 @@
     <div class="logo-wrap">
       <img src="assets/logo-psd-nopupils.png" alt="Systoons" style="height:36px;filter:brightness(1.8)">
       <svg class="logo-eyes" viewBox="0 0 1624 369" preserveAspectRatio="xMidYMid meet">
-        <circle class="pupil pupil-left" cx="835" cy="262" r="22" fill="#14335A"/>
-        <circle class="pupil pupil-right" cx="1028" cy="262" r="22" fill="#14335A"/>
+        <circle class="pupil pupil-left" cx="858" cy="225" r="40" fill="#14335A"/>
+        <circle class="pupil pupil-right" cx="1053" cy="222" r="40" fill="#14335A"/>
       </svg>
     </div>
   </div>
@@ -589,45 +605,46 @@
     document.getElementById('formSuccess').style.display = 'block';
   }
 
-  // Eye tracking — new PSD logo: viewBox 0 0 1624 369
-  // Eye white centers and pupil rest positions from PSD analysis
+  // Eye tracking — PSD logo viewBox: 0 0 1624 369
   const SVG_W = 1624, SVG_H = 369;
-  const PUPIL_R = 22;
+  const PUPIL_R = 40;
+  const DIVIDER_X = 956; // midpoint between eyes — pupils must not cross
   const EYES = {
-    left:  { restX: 835, restY: 262, eyeCX: 858, eyeCY: 221, eyeRX: 55, eyeRY: 70 },
-    right: { restX: 1028, restY: 262, eyeCX: 1052, eyeCY: 219, eyeRX: 55, eyeRY: 70 }
+    //         eye white center    radii of white area   max-x boundary
+    left:  { cx: 858, cy: 225, rx: 100, ry: 118, xMax: DIVIDER_X - PUPIL_R },
+    right: { cx: 1053, cy: 222, rx: 96, ry: 118, xMin: DIVIDER_X + PUPIL_R }
   };
-  // Midpoint between eyes — used as shared reference for gaze direction
-  const EYE_MID_X = (EYES.left.eyeCX + EYES.right.eyeCX) / 2;
-  const EYE_MID_Y = (EYES.left.eyeCY + EYES.right.eyeCY) / 2;
+  const EYE_MID_X = (EYES.left.cx + EYES.right.cx) / 2;
+  const EYE_MID_Y = (EYES.left.cy + EYES.right.cy) / 2;
 
   function updateEyes(mouseX, mouseY) {
     document.querySelectorAll('.logo-wrap').forEach(wrap => {
       const rect = wrap.getBoundingClientRect();
       const scaleX = SVG_W / rect.width;
       const scaleY = SVG_H / rect.height;
-
-      // Convert mouse to SVG coords
       const svgMX = (mouseX - rect.left) * scaleX;
       const svgMY = (mouseY - rect.top) * scaleY;
 
-      // Compute a single gaze direction from the midpoint between eyes
+      // Single shared gaze direction from midpoint
       const gdx = svgMX - EYE_MID_X;
       const gdy = svgMY - EYE_MID_Y;
       const gDist = Math.sqrt(gdx * gdx + gdy * gdy);
-      const factor = Math.min(1, gDist / 600);
-      // Normalized gaze direction
+      const factor = Math.min(1, gDist / 500);
       const gnx = gDist > 1 ? gdx / gDist : 0;
       const gny = gDist > 1 ? gdy / gDist : 0;
 
       ['left', 'right'].forEach(side => {
         const eye = EYES[side];
-        const maxTX = eye.eyeRX - PUPIL_R - 4;
-        const maxTY = eye.eyeRY - PUPIL_R - 4;
+        // Max travel = eye white radius minus pupil radius with padding
+        const maxTX = eye.rx - PUPIL_R - 6;
+        const maxTY = eye.ry - PUPIL_R - 6;
 
-        // Both pupils move in the same direction from their own eye center
-        const px = eye.eyeCX + gnx * maxTX * factor;
-        const py = eye.eyeCY + gny * maxTY * factor;
+        let px = eye.cx + gnx * maxTX * factor;
+        let py = eye.cy + gny * maxTY * factor;
+
+        // Clamp: left pupil must stay left of divider, right must stay right
+        if (side === 'left' && px > (eye.xMax || 9999)) px = eye.xMax;
+        if (side === 'right' && px < (eye.xMin || -9999)) px = eye.xMin;
 
         const svg = wrap.querySelector('.logo-eyes');
         if (svg) {
@@ -641,12 +658,11 @@
     });
   }
 
-  document.addEventListener('mousemove', (e) => {
+  document.addEventListener('mousemove', e => {
     requestAnimationFrame(() => updateEyes(e.clientX, e.clientY));
   });
-  document.addEventListener('touchmove', (e) => {
-    const touch = e.touches[0];
-    requestAnimationFrame(() => updateEyes(touch.clientX, touch.clientY));
+  document.addEventListener('touchmove', e => {
+    requestAnimationFrame(() => updateEyes(e.touches[0].clientX, e.touches[0].clientY));
   }, { passive: true });
 
   // Intersection Observer for fade-in animations
