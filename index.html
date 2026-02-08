@@ -238,7 +238,8 @@
       overflow: hidden; border-radius: 24px;
     }
     .carousel-track {
-      display: flex; transition: transform .5s cubic-bezier(.4,0,.2,1);
+      display: flex; transition: transform .5s cubic-bezier(.4,0,.2,1), height .4s ease;
+      align-items: flex-start;
     }
     .carousel-slide {
       min-width: 100%; padding: 0 20px;
@@ -251,13 +252,15 @@
       box-shadow: 0 12px 40px rgba(27,58,92,.15);
       background: var(--light-blue);
       object-fit: contain;
+      aspect-ratio: 16 / 9;
     }
     .carousel-slide .carousel-img {
-      height: 450px;
       width: auto;
       max-width: 100%;
+      max-height: 450px;
       padding: 24px;
       object-fit: contain;
+      aspect-ratio: auto;
     }
     .carousel-slide .vid-title {
       margin-top: 16px; font-family: 'Fredoka', sans-serif;
@@ -401,6 +404,15 @@
       nav ul.open { right: 0; }
       nav { padding: 12px 20px; }
       .carousel-btn { width: 40px; height: 40px; font-size: 1.1rem; }
+      .carousel-slide .carousel-img {
+        max-height: none;
+        height: auto;
+        width: 100%;
+        padding: 12px;
+      }
+      .carousel-slide video {
+        aspect-ratio: 16 / 9;
+      }
       .contact-form { padding: 28px 20px; }
     }
   </style>
@@ -579,6 +591,13 @@
     dotsContainer.appendChild(dot);
   });
 
+  function resizeCarousel() {
+    const activeSlide = slides[currentSlide];
+    if (activeSlide) {
+      track.style.height = activeSlide.scrollHeight + 'px';
+    }
+  }
+
   function goToSlide(n) {
     // Pause all videos when navigating away
     slides.forEach(s => { const v = s.querySelector('video'); if(v) v.pause(); });
@@ -587,7 +606,9 @@
     dotsContainer.querySelectorAll('button').forEach((d, i) =>
       d.classList.toggle('active', i === n)
     );
+    resizeCarousel();
   }
+
 
   function moveCarousel(dir) {
     let next = currentSlide + dir;
@@ -603,6 +624,10 @@
     const diff = touchStartX - e.changedTouches[0].screenX;
     if (Math.abs(diff) > 50) moveCarousel(diff > 0 ? 1 : -1);
   });
+
+  // Initial carousel sizing
+  resizeCarousel();
+  window.addEventListener('resize', resizeCarousel);
 
   // Contact form
   // TODO: Replace with your deployed Worker URL
@@ -739,8 +764,8 @@
   function updateRollLetters() {
     const scrollY = window.scrollY || window.pageYOffset;
     // Start rolling at 20px scroll, letters travel further before fading
-    const startAt = 20;
-    const range = 400;
+    const startAt = 0;
+    const range = 250;
 
     // Pre-compute each letter's width for rolling physics
     const letterWidths = Array.from(rollLetters).map(l => l.getBoundingClientRect().width || 40);
@@ -748,7 +773,7 @@
     rollLetters.forEach((letter, i) => {
       // Reverse stagger: period (last char) exits first
       const reverseI = totalChars - 1 - i;
-      const staggerPx = reverseI * 20;
+      const staggerPx = reverseI * 10;
       const localScroll = scrollY - startAt - staggerPx;
       const t = Math.max(0, Math.min(1, localScroll / range));
 
