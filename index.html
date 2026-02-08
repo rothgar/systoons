@@ -605,15 +605,41 @@
   });
 
   // Contact form
-  function submitForm() {
+  // TODO: Replace with your deployed Worker URL
+  const WORKER_URL = 'https://systoons-contact.<YOUR_SUBDOMAIN>.workers.dev';
+
+  async function submitForm() {
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
+    const company = document.getElementById('company').value.trim();
+    const message = document.getElementById('message').value.trim();
     if (!name || !email) {
       alert('Please fill in at least your name and email!');
       return;
     }
-    document.getElementById('contactForm').style.display = 'none';
-    document.getElementById('formSuccess').style.display = 'block';
+
+    const btn = document.querySelector('.submit-btn');
+    const origText = btn.textContent;
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, company, message }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Something went wrong');
+      }
+      document.getElementById('contactForm').style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+    } catch (err) {
+      alert(err.message || 'Failed to send. Please try again or email contact@systoons.com directly.');
+      btn.textContent = origText;
+      btn.disabled = false;
+    }
   }
 
   // Eye tracking — PSD logo viewBox: 0 0 1624 369

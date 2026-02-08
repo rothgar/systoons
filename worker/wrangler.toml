@@ -1,0 +1,8 @@
+name = "systoons-contact"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# Email destination — must match a verified Email Routing address
+[[send_email]]
+name = "SEND_EMAIL"
+destination_address = "contact@systoons.com"

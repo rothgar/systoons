@@ -1,0 +1,15 @@
+{
+  "name": "systoons-contact",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "mimetext": "^3.0.24"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
