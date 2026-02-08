@@ -112,11 +112,13 @@ export default {
         `,
       });
 
-      // Set Reply-To so you can reply directly to the sender
-      msg.setHeader('Reply-To', email.trim());
+      // Inject Reply-To header into the raw MIME output
+      const raw = msg.asRaw();
+      const replyTo = `Reply-To: "${name.trim().replace(/"/g, '')}" <${email.trim()}>`;
+      const rawWithReply = raw.replace('MIME-Version:', replyTo + '\r\nMIME-Version:');
 
       // Send via Cloudflare Email Routing
-      const emailMsg = new EmailMessage('noreply@systoons.com', 'contact@systoons.com', msg.asRaw());
+      const emailMsg = new EmailMessage('noreply@systoons.com', 'contact@systoons.com', rawWithReply);
       await env.SEND_EMAIL.send(emailMsg);
 
       return Response.json({ success: true }, { status: 200, headers });

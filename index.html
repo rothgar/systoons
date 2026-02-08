@@ -738,14 +738,14 @@
 
   function updateRollLetters() {
     const scrollY = window.scrollY || window.pageYOffset;
-    // Start as soon as user scrolls at all — trigger at 30px, fully gone by 250px
-    const startAt = 30;
-    const range = 220;
+    // Start rolling at 20px scroll, letters travel further before fading
+    const startAt = 20;
+    const range = 400;
 
     rollLetters.forEach((letter, i) => {
       // Reverse stagger: period (last char) exits first
       const reverseI = totalChars - 1 - i;
-      const staggerPx = reverseI * 15;
+      const staggerPx = reverseI * 20;
       const localScroll = scrollY - startAt - staggerPx;
       const t = Math.max(0, Math.min(1, localScroll / range));
 
@@ -753,11 +753,13 @@
         letter.style.transform = 'translateX(0) rotate(0deg)';
         letter.style.opacity = '1';
       } else {
-        // Roll off to the right
-        const xOff = t * 300;    // pixels to the right
-        const rot = t * 180;     // full half-rotation
+        // Roll off to the right — travel far
+        const xOff = t * 500;
+        const rot = t * 270;
+        // Stay fully visible until 60% through, then fade
+        const fade = t < 0.6 ? 1 : 1 - ((t - 0.6) / 0.4);
         letter.style.transform = `translateX(${xOff}px) rotate(${rot}deg)`;
-        letter.style.opacity = `${1 - t * 1.2}`;
+        letter.style.opacity = `${Math.max(0, fade)}`;
       }
     });
   }
