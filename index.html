@@ -121,7 +121,7 @@
     .to-life .roll-letter {
       display: inline-block;
       transition: transform 0.5s cubic-bezier(.4,0,.2,1), opacity 0.35s ease;
-      transform-origin: bottom center;
+      transform-origin: center center;
     }
     .to-life .roll-letter.space {
       width: 0.3em;
@@ -742,6 +742,9 @@
     const startAt = 20;
     const range = 400;
 
+    // Pre-compute each letter's width for rolling physics
+    const letterWidths = Array.from(rollLetters).map(l => l.getBoundingClientRect().width || 40);
+
     rollLetters.forEach((letter, i) => {
       // Reverse stagger: period (last char) exits first
       const reverseI = totalChars - 1 - i;
@@ -753,12 +756,15 @@
         letter.style.transform = 'translateX(0) rotate(0deg)';
         letter.style.opacity = '1';
       } else {
-        // Roll off to the right — travel far
-        const xOff = t * 500;
-        const rot = t * 270;
+        // Roll off to the right
+        const xOff = t * 600;
+        // Rolling: rotation = distance / radius, like a wheel
+        // Use half the letter width as the "radius"
+        const radius = letterWidths[i] / 2;
+        const rotDeg = radius > 0 ? (xOff / radius) * (180 / Math.PI) : xOff * 3;
         // Stay fully visible until 60% through, then fade
         const fade = t < 0.6 ? 1 : 1 - ((t - 0.6) / 0.4);
-        letter.style.transform = `translateX(${xOff}px) rotate(${rot}deg)`;
+        letter.style.transform = `translateX(${xOff}px) rotate(${rotDeg}deg)`;
         letter.style.opacity = `${Math.max(0, fade)}`;
       }
     });
