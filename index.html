@@ -266,6 +266,10 @@
       margin-top: 16px; font-family: 'Fredoka', sans-serif;
       font-size: 1.15rem; color: var(--dark-blue);
     }
+    .carousel-slide .vid-subtitle {
+      margin-top: 6px; font-size: 0.95rem; color: var(--text-light);
+      max-width: 500px; text-align: center; line-height: 1.5;
+    }
 
     .carousel-btn {
       position: absolute; top: 50%; transform: translateY(-50%);
@@ -493,16 +497,19 @@
           <source src="assets/logo-animation.mp4" type="video/mp4">
         </video>
         <span class="vid-title">Fully Animated System</span>
+        <span class="vid-subtitle">A complete story focused on your technology.</span>
       </div>
       <div class="carousel-slide">
         <img src="assets/character-sheet.png" alt="Custom Character Design" class="carousel-img">
         <span class="vid-title">Custom Character Design</span>
+        <span class="vid-subtitle">Work with you and professional character designers to make it relatable.</span>
       </div>
       <div class="carousel-slide">
         <video controls preload="metadata">
           <source src="assets/logo-animation.mp4" type="video/mp4">
         </video>
         <span class="vid-title">End-to-End Production Studio</span>
+        <span class="vid-subtitle">Animation is only part of a complete project. Writing, foley, recording, and editing all in one place.</span>
       </div>
     </div>
     <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#10094;</button>
