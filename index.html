@@ -45,7 +45,17 @@
       transition: box-shadow .3s;
     }
     nav.scrolled { box-shadow: 0 4px 24px rgba(27,58,92,.1); }
-    nav .logo { height: 48px; cursor: pointer; }
+    nav .logo { height: 48px; cursor: pointer; flex-shrink: 0; }
+    .logo-wrap {
+      position: relative; height: 100%; display: inline-block;
+    }
+    .logo-img { height: 100%; display: block; }
+    .logo-eyes {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .pupil { transition: cx 0.08s ease-out, cy 0.08s ease-out; }
     nav ul { list-style: none; display: flex; gap: 32px; }
     nav ul li a {
       text-decoration: none; color: var(--dark-blue);
@@ -97,13 +107,6 @@
       50% { transform: translateY(-30px) rotate(5deg); }
     }
 
-    .hero-logo-video {
-      width: min(500px, 80vw);
-      border-radius: 16px;
-      margin-bottom: 24px;
-      position: relative; z-index: 1;
-    }
-
     .hero h1 {
       font-size: clamp(2.2rem, 5vw, 4rem);
       color: var(--dark-blue);
@@ -123,7 +126,8 @@
       width: min(900px, 92vw);
       position: relative; z-index: 1;
       animation: bounceIn 1s ease-out;
-      filter: drop-shadow(0 12px 32px rgba(27,58,92,.15));
+      filter: drop-shadow(0 8px 20px rgba(27,58,92,.18)) drop-shadow(0 2px 6px rgba(27,58,92,.12));
+      margin-bottom: 8px;
     }
 
     @keyframes bounceIn {
@@ -317,7 +321,10 @@
       background: var(--dark-blue); color: rgba(255,255,255,.7);
       text-align: center; padding: 36px 20px;
     }
-    footer img { height: 36px; margin-bottom: 12px; filter: brightness(1.8); }
+    .footer-logo {
+      display: inline-block; margin-bottom: 12px;
+    }
+    .footer-logo .logo-wrap { display: inline-block; position: relative; }
     footer p { font-size: .9rem; }
     footer a { color: var(--yellow); text-decoration: none; }
 
@@ -352,7 +359,15 @@
 
 <!-- NAV -->
 <nav id="navbar">
-  <img src="assets/logo-full.png" alt="Systoons" class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <div class="logo-wrap">
+      <img src="assets/logo-nopupils.png" alt="Systoons" class="logo-img">
+      <svg class="logo-eyes" viewBox="0 0 806 180" preserveAspectRatio="xMidYMid meet">
+        <circle class="pupil pupil-left" cx="408" cy="129" r="11" fill="#14334A"/>
+        <circle class="pupil pupil-right" cx="499" cy="129" r="11" fill="#14334A"/>
+      </svg>
+    </div>
+  </div>
   <ul id="navMenu">
     <li><a href="#about" onclick="closeMenu()">What We Do</a></li>
     <li><a href="#showreel" onclick="closeMenu()">Showreel</a></li>
@@ -365,12 +380,9 @@
 
 <!-- HERO -->
 <section class="hero" id="hero">
-  <video class="hero-logo-video" autoplay muted playsinline loop>
-    <source src="assets/logo-animation.mp4" type="video/mp4">
-  </video>
+  <img src="assets/characters.png" alt="Systoons Characters" class="hero-characters">
   <h1>Bring Your Systems <span>to Life.</span></h1>
   <p>We turn complex systems and processes into playful, engaging animations that everyone can understand.</p>
-  <img src="assets/characters.jpg" alt="Systoons Characters" class="hero-characters">
   <a href="#contact" class="hero-cta">Let's Animate! ✨</a>
 </section>
 
@@ -404,19 +416,19 @@
   <div class="carousel-wrapper">
     <div class="carousel-track" id="carouselTrack">
       <div class="carousel-slide">
-        <video controls preload="metadata" poster="assets/characters.jpg">
+        <video controls preload="metadata">
           <source src="assets/logo-animation.mp4" type="video/mp4">
         </video>
         <span class="vid-title">Logo Animation</span>
       </div>
       <div class="carousel-slide">
-        <video controls preload="metadata" poster="assets/characters.jpg">
+        <video controls preload="metadata">
           <source src="assets/logo-animation.mp4" type="video/mp4">
         </video>
         <span class="vid-title">Character Intro Reel</span>
       </div>
       <div class="carousel-slide">
-        <video controls preload="metadata" poster="assets/characters.jpg">
+        <video controls preload="metadata">
           <source src="assets/logo-animation.mp4" type="video/mp4">
         </video>
         <span class="vid-title">Systems Explainer</span>
@@ -471,7 +483,15 @@
 
 <!-- FOOTER -->
 <footer>
-  <img src="assets/logo-full.png" alt="Systoons">
+  <div class="footer-logo">
+    <div class="logo-wrap">
+      <img src="assets/logo-nopupils.png" alt="Systoons" style="height:36px;filter:brightness(1.8)">
+      <svg class="logo-eyes" viewBox="0 0 806 180" preserveAspectRatio="xMidYMid meet">
+        <circle class="pupil pupil-left" cx="408" cy="129" r="11" fill="#14334A"/>
+        <circle class="pupil pupil-right" cx="499" cy="129" r="11" fill="#14334A"/>
+      </svg>
+    </div>
+  </div>
   <p>&copy; 2025 Systoons. All rights reserved. Made with 💛 and lots of keyframes.</p>
 </footer>
 
@@ -540,6 +560,68 @@
     document.getElementById('contactForm').style.display = 'none';
     document.getElementById('formSuccess').style.display = 'block';
   }
+
+  // Eye tracking
+  const EYES = {
+    left:  { cx: 408, cy: 129, ex: 406, ey: 110, rx: 20, ry: 28 },
+    right: { cx: 499, cy: 129, ex: 469, ey: 110, rx: 22, ry: 28 }
+  };
+  const PUPIL_R = 11;
+
+  function updateEyes(mouseX, mouseY) {
+    document.querySelectorAll('.logo-wrap').forEach(wrap => {
+      const rect = wrap.getBoundingClientRect();
+      const scaleX = 806 / rect.width;
+      const scaleY = 180 / rect.height;
+
+      ['left', 'right'].forEach(side => {
+        const eye = EYES[side];
+        // Convert mouse to SVG coordinates relative to this logo
+        const svgMouseX = (mouseX - rect.left) * scaleX;
+        const svgMouseY = (mouseY - rect.top) * scaleY;
+
+        // Direction from eye center to mouse
+        const dx = svgMouseX - eye.ex;
+        const dy = svgMouseY - eye.ey;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Max pupil travel distance (smaller than eye radius minus pupil radius)
+        const maxTravelX = eye.rx - PUPIL_R + 2;
+        const maxTravelY = eye.ry - PUPIL_R + 2;
+
+        let px, py;
+        if (dist < 1) {
+          px = eye.ex;
+          py = eye.ey;
+        } else {
+          // Normalize and scale by max travel, with easing for distance
+          const factor = Math.min(1, dist / 300);
+          px = eye.ex + (dx / dist) * maxTravelX * factor;
+          py = eye.ey + (dy / dist) * maxTravelY * factor;
+        }
+
+        // Find the pupil circles in this wrap's SVG
+        const svg = wrap.querySelector('.logo-eyes');
+        if (svg) {
+          const pupil = svg.querySelector(`.pupil-${side}`);
+          if (pupil) {
+            pupil.setAttribute('cx', px);
+            pupil.setAttribute('cy', py);
+          }
+        }
+      });
+    });
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    requestAnimationFrame(() => updateEyes(e.clientX, e.clientY));
+  });
+
+  // Touch support for eye tracking
+  document.addEventListener('touchmove', (e) => {
+    const touch = e.touches[0];
+    requestAnimationFrame(() => updateEyes(touch.clientX, touch.clientY));
+  }, { passive: true });
 
   // Intersection Observer for fade-in animations
   const observer = new IntersectionObserver((entries) => {
