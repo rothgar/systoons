@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Systoons — Bring Your Systems to Life</title>
+  <link rel="icon" type="image/png" href="assets/logo-short.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --yellow: #F2C94C;
+      --blue: #4A90D9;
+      --dark-blue: #1B3A5C;
+      --orange: #E07A5F;
+      --green: #81B29A;
+      --cream: #FFF9F0;
+      --light-blue: #E8F0FE;
+      --white: #FFFFFF;
+      --text: #2D3436;
+      --text-light: #636E72;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      color: var(--text);
+      background: var(--cream);
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3 { font-family: 'Fredoka', sans-serif; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 40px;
+      background: rgba(255,249,240,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid rgba(27,58,92,.08);
+      transition: box-shadow .3s;
+    }
+    nav.scrolled { box-shadow: 0 4px 24px rgba(27,58,92,.1); }
+    nav .logo { height: 48px; cursor: pointer; }
+    nav ul { list-style: none; display: flex; gap: 32px; }
+    nav ul li a {
+      text-decoration: none; color: var(--dark-blue);
+      font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.05rem;
+      position: relative; transition: color .2s;
+    }
+    nav ul li a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 3px; border-radius: 2px;
+      background: var(--yellow); transition: width .25s;
+    }
+    nav ul li a:hover { color: var(--blue); }
+    nav ul li a:hover::after { width: 100%; }
+    .nav-cta {
+      background: var(--blue); color: white !important;
+      padding: 10px 24px; border-radius: 50px;
+      transition: transform .2s, background .2s;
+    }
+    .nav-cta::after { display: none !important; }
+    .nav-cta:hover { background: var(--dark-blue); transform: scale(1.05); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 20px 60px;
+      position: relative;
+      background: linear-gradient(180deg, var(--cream) 0%, var(--light-blue) 100%);
+      overflow: hidden;
+    }
+
+    /* floating shapes background */
+    .hero::before, .hero::after {
+      content: ''; position: absolute; border-radius: 50%; opacity: .12;
+      animation: float 8s ease-in-out infinite;
+    }
+    .hero::before {
+      width: 300px; height: 300px; background: var(--yellow);
+      top: 10%; left: -80px;
+    }
+    .hero::after {
+      width: 200px; height: 200px; background: var(--blue);
+      bottom: 15%; right: -60px; animation-delay: -4s;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(5deg); }
+    }
+
+    .hero-logo-video {
+      width: min(500px, 80vw);
+      border-radius: 16px;
+      margin-bottom: 24px;
+      position: relative; z-index: 1;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      color: var(--dark-blue);
+      margin-bottom: 16px;
+      position: relative; z-index: 1;
+    }
+    .hero h1 span { color: var(--blue); }
+
+    .hero p {
+      font-size: clamp(1.1rem, 2vw, 1.35rem);
+      color: var(--text-light); max-width: 560px;
+      line-height: 1.6; margin-bottom: 36px;
+      position: relative; z-index: 1;
+    }
+
+    .hero-characters {
+      width: min(900px, 92vw);
+      position: relative; z-index: 1;
+      animation: bounceIn 1s ease-out;
+      filter: drop-shadow(0 12px 32px rgba(27,58,92,.15));
+    }
+
+    @keyframes bounceIn {
+      0% { opacity: 0; transform: translateY(60px) scale(.9); }
+      60% { transform: translateY(-10px) scale(1.02); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .hero-cta {
+      display: inline-block; margin-top: 32px;
+      padding: 16px 40px; border-radius: 50px;
+      background: var(--yellow); color: var(--dark-blue);
+      font-family: 'Fredoka', sans-serif; font-weight: 700;
+      font-size: 1.15rem; text-decoration: none;
+      box-shadow: 0 6px 24px rgba(242,201,76,.4);
+      transition: transform .2s, box-shadow .2s;
+      position: relative; z-index: 1;
+    }
+    .hero-cta:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 10px 32px rgba(242,201,76,.5);
+    }
+
+    /* ── SECTION SHARED ── */
+    section { padding: 80px 20px; }
+    .section-title {
+      text-align: center; font-size: clamp(1.8rem, 4vw, 2.8rem);
+      color: var(--dark-blue); margin-bottom: 12px;
+    }
+    .section-subtitle {
+      text-align: center; color: var(--text-light);
+      font-size: 1.1rem; max-width: 600px;
+      margin: 0 auto 48px; line-height: 1.6;
+    }
+
+    /* ── ABOUT / WHAT WE DO ── */
+    .about {
+      background: var(--white);
+    }
+    .about-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 32px; max-width: 1000px; margin: 0 auto;
+    }
+    .about-card {
+      background: var(--cream); border-radius: 20px;
+      padding: 36px 28px; text-align: center;
+      border: 2px solid transparent;
+      transition: transform .25s, border-color .25s, box-shadow .25s;
+    }
+    .about-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--yellow);
+      box-shadow: 0 12px 32px rgba(27,58,92,.08);
+    }
+    .about-card .icon {
+      font-size: 3rem; margin-bottom: 16px;
+      display: inline-block;
+      animation: wiggle 3s ease-in-out infinite;
+    }
+    .about-card:nth-child(2) .icon { animation-delay: -1s; }
+    .about-card:nth-child(3) .icon { animation-delay: -2s; }
+    @keyframes wiggle {
+      0%,100% { transform: rotate(0); }
+      25% { transform: rotate(-8deg); }
+      75% { transform: rotate(8deg); }
+    }
+    .about-card h3 {
+      color: var(--dark-blue); font-size: 1.25rem; margin-bottom: 10px;
+    }
+    .about-card p {
+      color: var(--text-light); line-height: 1.6; font-size: .95rem;
+    }
+
+    /* ── VIDEO CAROUSEL ── */
+    .showreel {
+      background: linear-gradient(180deg, var(--light-blue) 0%, var(--cream) 100%);
+    }
+    .carousel-wrapper {
+      position: relative; max-width: 1100px; margin: 0 auto;
+      overflow: hidden; border-radius: 24px;
+    }
+    .carousel-track {
+      display: flex; transition: transform .5s cubic-bezier(.4,0,.2,1);
+    }
+    .carousel-slide {
+      min-width: 100%; padding: 0 20px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .carousel-slide video {
+      width: 100%; max-width: 800px;
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(27,58,92,.15);
+      background: #000;
+    }
+    .carousel-slide .vid-title {
+      margin-top: 16px; font-family: 'Fredoka', sans-serif;
+      font-size: 1.15rem; color: var(--dark-blue);
+    }
+
+    .carousel-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 52px; height: 52px; border-radius: 50%;
+      border: none; cursor: pointer;
+      background: var(--white); color: var(--dark-blue);
+      font-size: 1.5rem; z-index: 5;
+      box-shadow: 0 4px 16px rgba(27,58,92,.15);
+      transition: background .2s, transform .2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .carousel-btn:hover {
+      background: var(--yellow); transform: translateY(-50%) scale(1.1);
+    }
+    .carousel-btn.prev { left: 16px; }
+    .carousel-btn.next { right: 16px; }
+
+    .carousel-dots {
+      display: flex; justify-content: center; gap: 10px; margin-top: 24px;
+    }
+    .carousel-dots button {
+      width: 12px; height: 12px; border-radius: 50%; border: none;
+      background: var(--blue); opacity: .3; cursor: pointer;
+      transition: opacity .2s, transform .2s;
+    }
+    .carousel-dots button.active {
+      opacity: 1; transform: scale(1.3);
+    }
+
+    /* ── CONTACT ── */
+    .contact {
+      background: var(--white);
+    }
+    .contact-form {
+      max-width: 600px; margin: 0 auto;
+      background: var(--cream); border-radius: 24px;
+      padding: 40px 36px;
+      box-shadow: 0 8px 32px rgba(27,58,92,.06);
+    }
+    .contact-form .form-group { margin-bottom: 20px; }
+    .contact-form label {
+      display: block; margin-bottom: 6px;
+      font-family: 'Fredoka', sans-serif; font-weight: 600;
+      color: var(--dark-blue); font-size: .95rem;
+    }
+    .contact-form input,
+    .contact-form textarea,
+    .contact-form select {
+      width: 100%; padding: 14px 18px;
+      border: 2px solid #ddd; border-radius: 14px;
+      font-family: 'Nunito', sans-serif; font-size: 1rem;
+      background: var(--white); transition: border-color .2s;
+      outline: none;
+    }
+    .contact-form input:focus,
+    .contact-form textarea:focus,
+    .contact-form select:focus {
+      border-color: var(--blue);
+    }
+    .contact-form textarea { resize: vertical; min-height: 120px; }
+    .contact-form .submit-btn {
+      width: 100%; padding: 16px;
+      border: none; border-radius: 50px; cursor: pointer;
+      background: var(--blue); color: white;
+      font-family: 'Fredoka', sans-serif; font-weight: 700;
+      font-size: 1.15rem;
+      box-shadow: 0 6px 24px rgba(74,144,217,.3);
+      transition: transform .2s, background .2s;
+    }
+    .contact-form .submit-btn:hover {
+      background: var(--dark-blue);
+      transform: translateY(-2px);
+    }
+    .form-success {
+      display: none; text-align: center; padding: 40px 20px;
+    }
+    .form-success .checkmark {
+      font-size: 3.5rem; margin-bottom: 16px;
+      animation: popIn .5s ease;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0); }
+      70% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .form-success h3 {
+      color: var(--dark-blue); font-size: 1.5rem; margin-bottom: 8px;
+    }
+    .form-success p { color: var(--text-light); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark-blue); color: rgba(255,255,255,.7);
+      text-align: center; padding: 36px 20px;
+    }
+    footer img { height: 36px; margin-bottom: 12px; filter: brightness(1.8); }
+    footer p { font-size: .9rem; }
+    footer a { color: var(--yellow); text-decoration: none; }
+
+    /* ── MOBILE ── */
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      flex-direction: column; gap: 5px; z-index: 200;
+    }
+    .hamburger span {
+      display: block; width: 26px; height: 3px;
+      background: var(--dark-blue); border-radius: 2px;
+      transition: .3s;
+    }
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      nav ul {
+        position: fixed; top: 0; right: -100%; width: 70vw;
+        height: 100vh; background: var(--cream);
+        flex-direction: column; align-items: center;
+        justify-content: center; gap: 36px;
+        transition: right .35s ease;
+        box-shadow: -8px 0 32px rgba(0,0,0,.1);
+      }
+      nav ul.open { right: 0; }
+      nav { padding: 12px 20px; }
+      .carousel-btn { width: 40px; height: 40px; font-size: 1.1rem; }
+      .contact-form { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <img src="assets/logo-full.png" alt="Systoons" class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <ul id="navMenu">
+    <li><a href="#about" onclick="closeMenu()">What We Do</a></li>
+    <li><a href="#showreel" onclick="closeMenu()">Showreel</a></li>
+    <li><a href="#contact" onclick="closeMenu()" class="nav-cta">Get in Touch</a></li>
+  </ul>
+  <button class="hamburger" id="burger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <video class="hero-logo-video" autoplay muted playsinline loop>
+    <source src="assets/logo-animation.mp4" type="video/mp4">
+  </video>
+  <h1>Bring Your Systems <span>to Life.</span></h1>
+  <p>We turn complex systems and processes into playful, engaging animations that everyone can understand.</p>
+  <img src="assets/characters.jpg" alt="Systoons Characters" class="hero-characters">
+  <a href="#contact" class="hero-cta">Let's Animate! ✨</a>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <h2 class="section-title">What We Do</h2>
+  <p class="section-subtitle">We specialize in creating fun, character-driven animations that make technical concepts feel approachable and memorable.</p>
+  <div class="about-grid">
+    <div class="about-card">
+      <div class="icon">🎨</div>
+      <h3>Character Design</h3>
+      <p>Lovable, custom characters tailored to represent your brand's systems, products, and workflows.</p>
+    </div>
+    <div class="about-card">
+      <div class="icon">🎬</div>
+      <h3>Explainer Animations</h3>
+      <p>Short, punchy animations that break down complex processes into easy-to-digest visual stories.</p>
+    </div>
+    <div class="about-card">
+      <div class="icon">🚀</div>
+      <h3>Training &amp; Onboarding</h3>
+      <p>Animated series that make onboarding fun and training material impossible to forget.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWREEL -->
+<section class="showreel" id="showreel">
+  <h2 class="section-title">Our Showreel</h2>
+  <p class="section-subtitle">Check out some of our latest work — playful animations that bring systems to life.</p>
+  <div class="carousel-wrapper">
+    <div class="carousel-track" id="carouselTrack">
+      <div class="carousel-slide">
+        <video controls preload="metadata" poster="assets/characters.jpg">
+          <source src="assets/logo-animation.mp4" type="video/mp4">
+        </video>
+        <span class="vid-title">Logo Animation</span>
+      </div>
+      <div class="carousel-slide">
+        <video controls preload="metadata" poster="assets/characters.jpg">
+          <source src="assets/logo-animation.mp4" type="video/mp4">
+        </video>
+        <span class="vid-title">Character Intro Reel</span>
+      </div>
+      <div class="carousel-slide">
+        <video controls preload="metadata" poster="assets/characters.jpg">
+          <source src="assets/logo-animation.mp4" type="video/mp4">
+        </video>
+        <span class="vid-title">Systems Explainer</span>
+      </div>
+    </div>
+    <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#10094;</button>
+    <button class="carousel-btn next" onclick="moveCarousel(1)">&#10095;</button>
+  </div>
+  <div class="carousel-dots" id="carouselDots"></div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <h2 class="section-title">Let's Create Together</h2>
+  <p class="section-subtitle">Ready for a custom animation? Tell us about your project and we'll bring it to life!</p>
+  <div class="contact-form" id="contactForm">
+    <div class="form-group">
+      <label for="name">Your Name</label>
+      <input type="text" id="name" placeholder="e.g. Jamie Smith" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="jamie@company.com" required>
+    </div>
+    <div class="form-group">
+      <label for="company">Company / Organization</label>
+      <input type="text" id="company" placeholder="Acme Corp">
+    </div>
+    <div class="form-group">
+      <label for="type">Type of Animation</label>
+      <select id="type">
+        <option value="" disabled selected>Select one…</option>
+        <option>Explainer Video</option>
+        <option>Product Demo</option>
+        <option>Training / Onboarding</option>
+        <option>Social Media Content</option>
+        <option>Something Else</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="message">Tell Us About Your Project</label>
+      <textarea id="message" placeholder="What system or concept do you want animated? Any details help!"></textarea>
+    </div>
+    <button class="submit-btn" onclick="submitForm()">Send It Over 🎉</button>
+  </div>
+  <div class="form-success" id="formSuccess">
+    <div class="checkmark">🎊</div>
+    <h3>Message Sent!</h3>
+    <p>We'll get back to you faster than a character can blink. Stay tooned!</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <img src="assets/logo-full.png" alt="Systoons">
+  <p>&copy; 2025 Systoons. All rights reserved. Made with 💛 and lots of keyframes.</p>
+</footer>
+
+<script>
+  // Nav scroll effect
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+  // Mobile menu
+  function toggleMenu() {
+    document.getElementById('navMenu').classList.toggle('open');
+  }
+  function closeMenu() {
+    document.getElementById('navMenu').classList.remove('open');
+  }
+
+  // Carousel
+  let currentSlide = 0;
+  const track = document.getElementById('carouselTrack');
+  const slides = track.querySelectorAll('.carousel-slide');
+  const dotsContainer = document.getElementById('carouselDots');
+
+  // build dots
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.setAttribute('aria-label', `Slide ${i + 1}`);
+    if (i === 0) dot.classList.add('active');
+    dot.addEventListener('click', () => goToSlide(i));
+    dotsContainer.appendChild(dot);
+  });
+
+  function goToSlide(n) {
+    // Pause all videos when navigating away
+    slides.forEach(s => { const v = s.querySelector('video'); if(v) v.pause(); });
+    currentSlide = n;
+    track.style.transform = `translateX(-${n * 100}%)`;
+    dotsContainer.querySelectorAll('button').forEach((d, i) =>
+      d.classList.toggle('active', i === n)
+    );
+  }
+
+  function moveCarousel(dir) {
+    let next = currentSlide + dir;
+    if (next < 0) next = slides.length - 1;
+    if (next >= slides.length) next = 0;
+    goToSlide(next);
+  }
+
+  // Touch swipe support
+  let touchStartX = 0;
+  track.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+  track.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 50) moveCarousel(diff > 0 ? 1 : -1);
+  });
+
+  // Contact form
+  function submitForm() {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    if (!name || !email) {
+      alert('Please fill in at least your name and email!');
+      return;
+    }
+    document.getElementById('contactForm').style.display = 'none';
+    document.getElementById('formSuccess').style.display = 'block';
+  }
+
+  // Intersection Observer for fade-in animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.about-card, .contact-form, .carousel-wrapper').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity .6s ease, transform .6s ease';
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
