@@ -116,13 +116,14 @@
     .hero h1 .to-life {
       color: var(--blue);
       display: inline-block;
-      opacity: 0;
-      transform: translateY(30px) scale(0.8);
-      transition: opacity 0.7s cubic-bezier(.34,1.56,.64,1), transform 0.7s cubic-bezier(.34,1.56,.64,1);
+      white-space: nowrap;
     }
-    .hero h1 .to-life.animate-in {
-      opacity: 1;
-      transform: translateY(0) scale(1);
+    .to-life .roll-letter {
+      display: inline-block;
+      transition: transform 0.4s cubic-bezier(.6,0,.4,1), opacity 0.3s ease;
+    }
+    .to-life .roll-letter.space {
+      width: 0.3em;
     }
 
     .hero p {
@@ -367,6 +368,13 @@
     }
     .footer-logo .logo-wrap { display: inline-block; position: relative; }
     footer p { font-size: .9rem; }
+    .footer-human {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      color: rgba(255,255,255,.9);
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
     footer a { color: var(--yellow); text-decoration: none; }
 
     /* ── MOBILE ── */
@@ -424,15 +432,16 @@
   <div class="hero-characters-wrap">
     <img src="assets/characters.png" alt="Systoons Characters" class="hero-characters">
     <div class="char-shadows">
-      <div class="char-shadow" style="left:6%;width:8%;top:83%"></div>
-      <div class="char-shadow" style="left:17%;width:10%;top:83%"></div>
-      <div class="char-shadow" style="left:30%;width:13%;top:83%"></div>
-      <div class="char-shadow" style="left:42%;width:14%;top:82%"></div>
-      <div class="char-shadow" style="left:58%;width:11%;top:81.5%"></div>
-      <div class="char-shadow" style="left:76%;width:14%;top:83%"></div>
+      <div class="char-shadow" style="left:6%;width:6%;top:83%"></div>
+      <div class="char-shadow" style="left:12.5%;width:7%;top:83%"></div>
+      <div class="char-shadow" style="left:30%;width:10%;top:82.5%"></div>
+      <div class="char-shadow" style="left:40.5%;width:10%;top:82%"></div>
+      <div class="char-shadow" style="left:56.5%;width:9%;top:81.5%"></div>
+      <div class="char-shadow" style="left:69.5%;width:9%;top:81.5%"></div>
+      <div class="char-shadow" style="left:81%;width:10%;top:82.5%"></div>
     </div>
   </div>
-  <h1>Bring Your Systems <span class="to-life">to Life.</span></h1>
+  <h1>Bring Your Systems <span class="to-life" id="toLife"></span></h1>
   <p>We turn complex systems and processes into playful, engaging animations that everyone can understand.</p>
   <a href="#contact" class="hero-cta">Let's Animate! ✨</a>
 </section>
@@ -536,6 +545,7 @@
       </svg>
     </div>
   </div>
+  <p class="footer-human">🎨 All characters and animations are created with human creativity — not AI.</p>
   <p>&copy; 2025 Systoons. All rights reserved. Made with 💛 and lots of keyframes.</p>
 </footer>
 
@@ -682,16 +692,55 @@
     observer.observe(el);
   });
 
-  // "to Life" scroll animation
-  const toLife = document.querySelector('.to-life');
-  const toLifeObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        toLife.classList.add('animate-in');
+  // "to Life." rolling letters on scroll
+  const toLifeEl = document.getElementById('toLife');
+  const toLifeText = 'to Life.';
+  toLifeText.split('').forEach((ch, i) => {
+    const span = document.createElement('span');
+    span.className = 'roll-letter' + (ch === ' ' ? ' space' : '');
+    span.textContent = ch === ' ' ? '\u00A0' : ch;
+    span.style.transitionDelay = `${i * 0.04}s`;
+    toLifeEl.appendChild(span);
+  });
+
+  const rollLetters = toLifeEl.querySelectorAll('.roll-letter');
+  const heroSection = document.getElementById('hero');
+
+  function updateRollLetters() {
+    // How far the hero has scrolled off-screen (0 = top visible, 1 = fully gone)
+    const rect = heroSection.getBoundingClientRect();
+    const heroBottom = rect.bottom;
+    const viewH = window.innerHeight;
+    // progress: 0 when hero bottom is at viewport bottom, 1 when hero bottom reaches top
+    const progress = 1 - (heroBottom / viewH);
+    // Start rolling when hero is ~40% scrolled, fully gone by ~80%
+    const startAt = 0.2;
+    const endAt = 0.6;
+
+    rollLetters.forEach((letter, i) => {
+      // Stagger: later letters roll later
+      const stagger = i * 0.04;
+      const localProgress = (progress - startAt - stagger) / (endAt - startAt);
+      const t = Math.max(0, Math.min(1, localProgress));
+
+      if (t <= 0) {
+        // Fully visible — in place
+        letter.style.transform = 'translateY(0) rotate(0deg)';
+        letter.style.opacity = '1';
+      } else {
+        // Rolling off: translate down and rotate
+        const yOff = t * 80;   // pixels down
+        const rot = t * 120;   // degrees of rotation
+        letter.style.transform = `translateY(${yOff}px) rotate(${rot}deg)`;
+        letter.style.opacity = `${1 - t}`;
       }
     });
-  }, { threshold: 0.5 });
-  if (toLife) toLifeObserver.observe(toLife);
+  }
+
+  window.addEventListener('scroll', () => {
+    requestAnimationFrame(updateRollLetters);
+  }, { passive: true });
+  updateRollLetters(); // initial state
 </script>
 
 </body>
